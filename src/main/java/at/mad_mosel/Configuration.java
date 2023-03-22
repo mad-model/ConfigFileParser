@@ -8,11 +8,11 @@ public class Configuration {
 
     private String key;
     private String value;
-    private Set<String> allowedValues = new HashSet<>();
+    private Set<String> allowedRegexes = new HashSet<>();
 
-    public Configuration(String key, String value, String[] allowedValues) {
+    public Configuration(String key, String value, String[] allowedRegexes) {
         this.value = value;
-        this.allowedValues.addAll(Arrays.stream(allowedValues).toList());
+        this.allowedRegexes.addAll(Arrays.stream(allowedRegexes).toList());
         setKey(key);
         configurations.add(this);
         configurationMap.put(key,this);
@@ -40,25 +40,32 @@ public class Configuration {
      * allowed Values
      */
     public void setValue(String value) throws IllegalArgumentException {
-        if (!allowedValues.contains(value)) throw new IllegalArgumentException("Value not allowed!");
+        boolean found = false;
+        for (String regex : allowedRegexes) {
+            if (value.matches(regex)) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) throw new IllegalArgumentException("Value not allowed!");
         this.value = value;
     }
 
     public boolean addAllowedValue(String value) {
-        if (this.allowedValues.contains(value)) return false;
-        this.allowedValues.add(value);
+        if (this.allowedRegexes.contains(value)) return false;
+        this.allowedRegexes.add(value);
         return true;
     }
 
     public boolean removeAllowedValue(String value) {
-        return this.allowedValues.remove(value);
+        return this.allowedRegexes.remove(value);
     }
 
 
     public String allowedValuesToString() {
-        if (allowedValues == null || allowedValues.size() == 0) return "";
+        if (allowedRegexes == null || allowedRegexes.size() == 0) return "";
         StringBuilder stringBuilder = new StringBuilder();
-        for (String val : allowedValues) stringBuilder.append(val).append(';');
+        for (String val : allowedRegexes) stringBuilder.append(val).append(';');
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         return stringBuilder.toString();
     }
