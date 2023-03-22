@@ -42,6 +42,14 @@ public class ConfigParser {
         return Configuration.configurations;
     }
 
+    public Configuration getConfiguration(String key) {
+        return Configuration.configurationMap.get(key);
+    }
+
+    public String getConfigurationValue(String key) {
+        return Configuration.configurationMap.get(key).getValue();
+    }
+
     public void saveConfigs() {
         writeFile();
     }
@@ -58,7 +66,7 @@ public class ConfigParser {
             while (fileReader.hasNextLine()) {
                 String line = fileReader.nextLine();
                 if (line.matches("#.*")) continue;
-                if (!line.matches("\\p{Alnum}+;\\p{Alnum}*;\\{(\\p{Alnum}+;)+\\p{Alnum}+\\}.*?"))
+                if (!line.matches("\\p{Alnum}+;\\p{Alnum}*;\\{(\\p{Alnum}+;)+\\p{Alnum}+\\}.*"))
                     throw new IllegalStateException("Illegal config file format!");
                 String[] cutComment = line.split("#");
                 String[] helpState = cutComment[0].split("\\{");

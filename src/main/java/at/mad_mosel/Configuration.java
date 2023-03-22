@@ -4,6 +4,7 @@ import java.util.*;
 
 public class Configuration {
     protected static List<Configuration> configurations = new LinkedList<>();
+    protected static HashMap<String, Configuration> configurationMap = new HashMap<>();
 
     private String key;
     private String value;
@@ -14,14 +15,19 @@ public class Configuration {
         this.allowedValues.addAll(Arrays.stream(allowedValues).toList());
         setKey(key);
         configurations.add(this);
+        configurationMap.put(key,this);
     }
 
     public void setKey(String key) throws IllegalArgumentException {
-        if(key == null || key.equals("")) throw new IllegalArgumentException("key null or empty");
+        if (key == null || key.equals("")) throw new IllegalArgumentException("key null or empty");
         for (Configuration conf : configurations) {
             if (key.equals(conf.key)) throw new IllegalArgumentException("Duplicated key : " + key);
         }
         this.key = key;
+    }
+
+    public String getValue() {
+        return value;
     }
 
     public String getKey() {
@@ -33,27 +39,27 @@ public class Configuration {
      * Sets the value if it is contained in
      * allowed Values
      */
-    public void setValue(String value) throws IllegalArgumentException{
+    public void setValue(String value) throws IllegalArgumentException {
         if (!allowedValues.contains(value)) throw new IllegalArgumentException("Value not allowed!");
         this.value = value;
     }
 
-    public boolean addAllowedValue (String value) {
+    public boolean addAllowedValue(String value) {
         if (this.allowedValues.contains(value)) return false;
         this.allowedValues.add(value);
         return true;
     }
 
-    public boolean removeAllowedValue (String value) {
+    public boolean removeAllowedValue(String value) {
         return this.allowedValues.remove(value);
     }
 
 
-    public String allowedValuesToString () {
+    public String allowedValuesToString() {
         if (allowedValues == null || allowedValues.size() == 0) return "";
         StringBuilder stringBuilder = new StringBuilder();
         for (String val : allowedValues) stringBuilder.append(val).append(';');
-        stringBuilder.deleteCharAt(stringBuilder.length()-1);
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         return stringBuilder.toString();
     }
 
@@ -61,6 +67,6 @@ public class Configuration {
     public String toString() {
         if (key == null) key = "";
         if (value == null) value = "";
-        return key + ";" + value + ";{" + allowedValuesToString() +"}";
+        return key + ";" + value + ";{" + allowedValuesToString() + "}";
     }
 }
