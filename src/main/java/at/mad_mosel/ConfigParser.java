@@ -14,10 +14,6 @@ import java.util.*;
 public class ConfigParser {
     private static final String DEFAULT_PATH = System.getProperty("user.dir") + "/config.conf";
 
-    private void addConfiguration(Configuration configuration) {
-        configurations.add(configuration);
-    }
-
     private File configFile;
 
     /**
@@ -54,6 +50,13 @@ public class ConfigParser {
         writeFile();
     }
 
+    public boolean addConfiguration(Configuration configuration) {
+        for (Configuration c : configurations) if(c.getKey().equals(configuration.getKey())) return false;
+        configurations.add(configuration);
+        Configuration.configurationMap.put(configuration.getKey(),configuration);
+        return true;
+    }
+
 
     private void readFile(boolean create) {
         try {
@@ -66,7 +69,7 @@ public class ConfigParser {
             while (fileReader.hasNextLine()) {
                 String line = fileReader.nextLine();
                 if (line.matches("#.*")) continue;
-                if (!line.matches("\\p{Alnum}+;\\p{Alnum}*;\\{(\\p{Alnum}+;)+\\p{Alnum}+\\}.*"))
+                if (!line.matches("\\p{Alnum}+;[^;]*;\\{(\\p{Alnum}+;)+\\p{Alnum}+\\}.*"))
                     throw new IllegalStateException("Illegal config file format!");
                 String[] cutComment = line.split("#");
                 String[] helpState = cutComment[0].split("\\{");

@@ -3,8 +3,8 @@ package at.mad_mosel;
 import java.util.*;
 
 public class Configuration {
-    protected static List<Configuration> configurations = new LinkedList<>();
-    protected static HashMap<String, Configuration> configurationMap = new HashMap<>();
+    static List<Configuration> configurations = new LinkedList<>();
+    static HashMap<String, Configuration> configurationMap = new HashMap<>();
 
     private String key;
     private String value;
